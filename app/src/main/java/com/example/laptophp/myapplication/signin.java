@@ -25,7 +25,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class signin extends AppCompatActivity {
-    TextView t1, t2;
+
 
     EditText username_et, password_et;
     Button login;
@@ -34,8 +34,7 @@ public class signin extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signin);
-        t1 = (TextView) findViewById(R.id.textView1);
-        t2 = (TextView) findViewById(R.id.textView2);
+
         username_et = (EditText) findViewById(R.id.editText1);
         password_et = (EditText) findViewById(R.id.editText2);
         login = (Button) findViewById(R.id.button);
@@ -49,11 +48,6 @@ public class signin extends AppCompatActivity {
     }
 
     public void login(View view) {
-
-        Button b = (Button) view;
-
-        b.setBackgroundColor(Color.DKGRAY);
-
 
         String username = username_et.getText().toString();
 

@@ -33,7 +33,6 @@ public class Search_result extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_result);
         time_list = new ArrayList<>();
-        stop_id = getIntent().getStringExtra("stop_id");
         route_id = getIntent().getStringExtra("route_id");
         time_recycler = findViewById(R.id.recycler_id);
 
@@ -99,7 +98,7 @@ public class Search_result extends AppCompatActivity {
         @Override
         public view_holder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-            view_holder v = new Search_Stop.view_holder(LayoutInflater.from(parent.getContext()).inflate(R.layout.search_cell, parent, false));
+            view_holder v = new view_holder(LayoutInflater.from(parent.getContext()).inflate(R.layout.search_cell, parent, false));
 
             return v;
         }
@@ -109,7 +108,7 @@ public class Search_result extends AppCompatActivity {
 
 
             final createtime data = time_list.get(position);
-            if (data.routeidd.equals(route_id) && data.stop_id.equals(stop_id)) {
+            if (data.routeidd.equals(route_id)) {
                 get_route(data.routeidd);
                 get_bus(data.bus_id);
                 get_stop(data.stop_id);

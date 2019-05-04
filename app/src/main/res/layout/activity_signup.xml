@@ -153,19 +153,20 @@
             android:src="@drawable/gender"
             android:layout_marginLeft="20dp"
             android:id="@+id/image_venus"/>
-        <EditText
-            android:layout_width="match_parent"
+        <RadioGroup
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Gender"
-            android:inputType="textPersonName"
-            android:background="@null"
-            android:textColorHint="#a39898"
-            android:textColor="#fff"
-            android:imeOptions="actionNext"
-            android:id="@+id/gender_et"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="4dp"
-            />
+            android:orientation="horizontal"
+            android:id="@+id/gender">
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Male"/>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Female"/>
+        </RadioGroup>
     </LinearLayout>
 
     <View
@@ -228,20 +229,6 @@
         android:layout_marginTop="480dp"
         android:onClick="signup"
         android:layout_marginBottom="10dp"/>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </RelativeLayout>
     </RelativeLayout>
 

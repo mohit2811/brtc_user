@@ -43,9 +43,6 @@ public class Profile extends AppCompatActivity {
         email = (EditText) findViewById(R.id.email);
         mobile = (EditText) findViewById(R.id.mobile);
         name = (EditText) findViewById(R.id.name);
-
-
-
         male_radio = (RadioButton) findViewById(R.id.male_radio);
         female_radio = (RadioButton) findViewById(R.id.female_radio);
 
@@ -66,18 +63,17 @@ public class Profile extends AppCompatActivity {
         database.getReference().child("users").child(emails).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
                 createuser  data = dataSnapshot.getValue(createuser.class);
-
-                name.setText(data.user_name);
+                System.out.println("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv"+data.user_name+data.email+data.gender+data.mobile);
+               /* name.setText(data.user_name);
                 mobile.setText(data.mobile);
                 email.setText(data.email);
-                if (data.gender.equals("male")) {
+                if (data.gender.equals("Male")) {
                     male_radio.setChecked(true);
                 } else {
                     female_radio.setChecked(true);
                 }
-
+*/
 
 
             }
@@ -122,7 +118,7 @@ public class Profile extends AppCompatActivity {
         progress_bar.show();
 
 
-        createuser data = new createuser (name.getText().toString(), email.getText().toString(),mobile.getText().toString(),gender);
+        createuser data = new createuser ( email.getText().toString(),gender,mobile.getText().toString(),name.getText().toString());
                     final FirebaseDatabase database = FirebaseDatabase.getInstance();
                     database.getReference().child("user").child(email.getText().toString().replace(".","")).setValue(data);
                     Toast.makeText(Profile.this, "update success", Toast.LENGTH_SHORT).show();

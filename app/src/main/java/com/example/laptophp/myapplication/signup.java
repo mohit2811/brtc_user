@@ -7,6 +7,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -27,7 +28,7 @@ public class signup extends AppCompatActivity {
 
 
     EditText user_name_et , email_et , mobile_et , password_et ;
-    RadioButton male_radio, female_radio;
+    RadioGroup gender;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +41,7 @@ public class signup extends AppCompatActivity {
 
         mobile_et = (EditText) findViewById(R.id.mobile_et);
 
-        male_radio = (RadioButton) findViewById(R.id.male_radio);
-        female_radio = (RadioButton) findViewById(R.id.female_radio);
+        gender =findViewById(R.id.gender);
 
         password_et = (EditText) findViewById(R.id.password_et);
 
@@ -59,7 +59,7 @@ public class signup extends AppCompatActivity {
         String password = password_et.getText().toString();
 
         String pattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[!@#$%^&*+=?-]).{8,15}$";
-
+        final String genders =((RadioButton)findViewById(gender.getCheckedRadioButtonId())).getText().toString();
         if(user_name.length() < 4 || !user_name.matches("[a-zA-Z ]+"))
         {
 
@@ -83,16 +83,9 @@ public class signup extends AppCompatActivity {
             Toast.makeText(signup.this, "password must contain atleast one alphabet , digit , special character and length must be 8 character", Toast.LENGTH_SHORT).show();
             return;
         }
-        final String gender;
-        String gender1 = null;
-        if (male_radio.isChecked()) {
-            gender1 ="male";
-        }
-        if (female_radio.isChecked()) {
-            gender1 ="female";
-        }
 
-        gender = gender1;
+
+
         FirebaseAuth f_auth = FirebaseAuth.getInstance();
 
         OnCompleteListener<AuthResult> listener = new OnCompleteListener<AuthResult>() {
@@ -102,7 +95,7 @@ public class signup extends AppCompatActivity {
 
                 if (task.isSuccessful()) {
                     Toast.makeText(signup.this, "done", Toast.LENGTH_SHORT).show();
-                    createuser data = new createuser (user_name, email,mobile,gender);
+                    createuser data = new createuser ( email,genders,mobile,user_name);
                     final FirebaseDatabase database = FirebaseDatabase.getInstance();
                     database.getReference().child("user").child(email.replace(".","")).setValue(data);
 

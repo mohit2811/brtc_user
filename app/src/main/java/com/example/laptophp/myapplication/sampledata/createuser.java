@@ -9,7 +9,7 @@ public class createuser {
     public createuser() {
     }
 
-    public createuser(String user_name,String email,String mobile,String gender)
+    public createuser(String email,String gender,String mobile,String user_name)
 
     {
         this.user_name = user_name;
@@ -20,3 +20,4 @@ public class createuser {
         this.gender = gender;
     }
 }
+
