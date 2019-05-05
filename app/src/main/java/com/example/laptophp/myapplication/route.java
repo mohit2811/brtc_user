@@ -74,7 +74,7 @@ public class route extends AppCompatActivity {
     public void get_routes() {
         final List<String> routes = new ArrayList<>();
         FirebaseDatabase data = FirebaseDatabase.getInstance();
-        data.getReference().child("routes").addListenerForSingleValueEvent(new ValueEventListener() {
+        data.getReference().child("route").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {

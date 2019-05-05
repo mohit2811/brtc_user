@@ -60,12 +60,12 @@ public class Profile extends AppCompatActivity {
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-        database.getReference().child("users").child(emails).addListenerForSingleValueEvent(new ValueEventListener() {
+        database.getReference().child("user").child(emails).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 createuser  data = dataSnapshot.getValue(createuser.class);
                 System.out.println("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv"+data.user_name+data.email+data.gender+data.mobile);
-               /* name.setText(data.user_name);
+                name.setText(data.user_name);
                 mobile.setText(data.mobile);
                 email.setText(data.email);
                 if (data.gender.equals("Male")) {
@@ -73,7 +73,6 @@ public class Profile extends AppCompatActivity {
                 } else {
                     female_radio.setChecked(true);
                 }
-*/
 
 
             }

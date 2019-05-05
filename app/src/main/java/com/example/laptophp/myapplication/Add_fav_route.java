@@ -30,6 +30,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Add_fav_route extends AppCompatActivity {
 
@@ -49,20 +50,20 @@ public class Add_fav_route extends AppCompatActivity {
         route_spinner = (Spinner) findViewById(R.id.route_spinner);
 
 
-        get_routes();
         get_fav_routes();
     }
 
     public void add_fav(View view) {
 
         String route_id = routes_ids.get(route_spinner.getSelectedItemPosition());
-        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail().toString();
+        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+System.out.println(route_id+routes_fav.toString()+"vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv");
         if (routes_fav.contains(route_id)) {
             Toast.makeText(Add_fav_route.this, "Already Added in favorites", Toast.LENGTH_SHORT).show();
         } else {
             createfav data = new createfav(route_id,email);
             final FirebaseDatabase database = FirebaseDatabase.getInstance();
-            database.getReference().child("favorite").child(email).push().setValue(data).addOnCompleteListener(new OnCompleteListener<Void>() {
+            database.getReference().child("favorite").child(email.replace(".","")).push().setValue(data).addOnCompleteListener(new OnCompleteListener<Void>() {
 
                 public void onComplete(@NonNull Task<Void> task) {
 
@@ -108,14 +109,16 @@ public class Add_fav_route extends AppCompatActivity {
     public void get_fav_routes() {
         String email = FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".", "");
         FirebaseDatabase data = FirebaseDatabase.getInstance();
-        data.getReference().child("favorite").child(email).addListenerForSingleValueEvent(new ValueEventListener() {
+        data.getReference().child("favorite").child(email).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                routes_fav.clear();
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    createroute details = data.getValue(createroute.class);
-                    details.r_id = data.getKey();
-                    routes_fav.add(details.r_id);
+                    createfav details = data.getValue(createfav.class);
+                    routes_fav.add(details.routeidd);
                 }
+
+                get_routes();
 
             }
 

@@ -50,24 +50,25 @@ public class Search_Stop extends AppCompatActivity {
 
         FirebaseDatabase data = FirebaseDatabase.getInstance();
         System.out.println("rrrr");
-        data.getReference().child("time").addListenerForSingleValueEvent(new ValueEventListener() {
+        data.getReference().child("Time").addListenerForSingleValueEvent(new ValueEventListener() {
 
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 time_list.clear();
 
-
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
+
                     createtime details = data.getValue(createtime.class);
-                    System.out.println("rrrrrr");
-                    details.t_id = data.getKey();
-                    time_list.add(details);
-                    Adapter adapter = new Adapter();
-                    time_recycler.setAdapter(adapter);
+                    System.out.println("rrrcccccccccccccccccccccccccccccccccccccccccccrrr");
+                    if (details.routeidd.equals(route_id) && details.stop_id.equals(stop_id)){
+                        details.t_id = data.getKey();
+                        time_list.add(details);
+                        Adapter adapter = new Adapter();
+                        time_recycler.setAdapter(adapter);
+                    }
                 }
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
@@ -85,7 +86,7 @@ public class Search_Stop extends AppCompatActivity {
 
     public class view_holder extends RecyclerView.ViewHolder {
 
-        Button del;
+
         TextView bid, from_id, to_id, stop_id, time_id;
 
         public view_holder(View itemView) {
@@ -96,6 +97,7 @@ public class Search_Stop extends AppCompatActivity {
             to_id = itemView.findViewById(R.id.to_id);
             stop_id = itemView.findViewById(R.id.stop_id);
             time_id = itemView.findViewById(R.id.timing_id);
+
         }
     }
 
@@ -114,17 +116,10 @@ public class Search_Stop extends AppCompatActivity {
 
 
             final createtime data = time_list.get(position);
-            if (data.routeidd.equals(route_id) && data.stop_id.equals(stop_id)) {
-                get_route(data.routeidd);
-                get_bus(data.bus_id);
-                get_stop(data.stop_id);
-                holder.bid.setText(bus_num);
-                holder.from_id.setText(from_);
-                holder.stop_id.setText(stop_);
-                holder.to_id.setText(to_);
-                holder.time_id.setText(data.time);
-
-            }
+            get_routes(data.routeidd,holder.from_id,holder.to_id);
+            get_bus(data.bus_id,holder.bid);
+            get_stop(data.stop_id,holder.stop_id);
+            holder.time_id.setText(data.time);
         }
 
         @Override
@@ -133,13 +128,14 @@ public class Search_Stop extends AppCompatActivity {
         }
     }
 
-    private void get_bus(String bus_id) {
+    private void get_bus(String bus_id, final TextView bid) {
+        System.out.println(bus_id+"vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv");
         FirebaseDatabase data = FirebaseDatabase.getInstance();
         data.getReference().child("bus").child(bus_id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 createbuss details = dataSnapshot.getValue(createbuss.class);
-                bus_num = details.b_num;
+                bid.setText(details.b_num);
             }
 
             @Override
@@ -149,13 +145,13 @@ public class Search_Stop extends AppCompatActivity {
         });
     }
 
-    private void get_stop(String stop_id) {
+    private void get_stop(final String stop_id, final TextView stopId) {
         FirebaseDatabase data = FirebaseDatabase.getInstance();
         data.getReference().child("stop").child(stop_id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 createstop details = dataSnapshot.getValue(createstop.class);
-                stop_ = details.s_id;
+                stopId.setText(details.S_name);
             }
 
             @Override
@@ -165,14 +161,16 @@ public class Search_Stop extends AppCompatActivity {
         });
     }
 
-    private void get_route(String routeidd) {
+    private void get_routes(String routeidd, final TextView floc, final TextView tloc) {
         FirebaseDatabase data = FirebaseDatabase.getInstance();
         data.getReference().child("route").child(routeidd).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                createroute details = dataSnapshot.getValue(createroute.class);
-                from_ = details.from_loc;
-                to_ = details.to_loc;
+                createroute details=dataSnapshot.getValue(createroute.class);
+                floc.setText(details.from_loc);
+                tloc.setText(details.to_loc);
+
+                System.out.println(from_+to_+"mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
             }
 
             @Override
@@ -181,5 +179,4 @@ public class Search_Stop extends AppCompatActivity {
             }
         });
     }
-
 }

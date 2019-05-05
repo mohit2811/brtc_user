@@ -33,7 +33,7 @@ import java.util.ArrayList;
     ImageView menu;
     DrawerLayout drawerLayout;
       ArrayList<createtime> time_list;
-      ArrayList<String> routes_fav;
+      ArrayList<String> routes_fav,f_id;
       RecyclerView time_recycler;
       String from_, to_, bus_num, stop_;
       ProgressDialog pd;
@@ -47,6 +47,7 @@ import java.util.ArrayList;
             drawerLayout=(DrawerLayout)findViewById(R.id.drawer);
         time_list = new ArrayList<>();
         routes_fav = new ArrayList<String>();
+        f_id = new ArrayList<String>();
         pd=new ProgressDialog(this);
         pd.setTitle("Wait!!!");
         pd.setMessage("Loading!!!!!!");
@@ -100,12 +101,17 @@ import java.util.ArrayList;
         startActivity(i);
 
     }
+      @Override
+      protected void onResume() {
+          super.onResume();
+          get_fav_routes();
 
+      }
     public void get_time() {
 
         FirebaseDatabase data = FirebaseDatabase.getInstance();
-        System.out.println("rrrr");
-        data.getReference().child("Time").addListenerForSingleValueEvent(new ValueEventListener() {
+        System.out.println(routes_fav.toString()+f_id.toString()+"vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv"+"rrrr");
+        data.getReference().child("Time").addValueEventListener(new ValueEventListener() {
 
 
             @Override
@@ -113,13 +119,16 @@ import java.util.ArrayList;
                 time_list.clear();
                 pd.hide();
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
-
                     createtime details = data.getValue(createtime.class);
                     System.out.println("rrrcccccccccccccccccccccccccccccccccccccccccccrrr");
-                    details.t_id = data.getKey();
-                    time_list.add(details);
-                    Adapter adapter = new Adapter();
-                    time_recycler.setAdapter(adapter);
+                    if (routes_fav.contains(details.routeidd)) {
+                        details.t_id = data.getKey();
+                       details.f_id= f_id.get(routes_fav.indexOf(details.routeidd));
+                        time_list.add(details);
+                    }
+                        Adapter adapter = new Adapter();
+                        time_recycler.setAdapter(adapter);
+
                 }
             }
 
@@ -131,12 +140,7 @@ import java.util.ArrayList;
     }
 
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        get_fav_routes();
-        get_time();
-    }
+
 
     public class view_holder extends RecyclerView.ViewHolder {
 
@@ -168,9 +172,8 @@ import java.util.ArrayList;
         @Override
         public void onBindViewHolder(view_holder holder, int position) {
 
-
+            final String email = FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".", "");
             final createtime data = time_list.get(position);
-            if (routes_fav.contains(data.routeidd)) {
                 get_routes(data.routeidd, holder.from_id, holder.to_id);
                 get_bus(data.bus_id, holder.bid);
                 get_stop(data.stop_id, holder.stop_id);
@@ -178,13 +181,12 @@ import java.util.ArrayList;
                 holder.del.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
-                        DatabaseReference mPostReference = FirebaseDatabase.getInstance().getReference().child("time").child(data.t_id);
+                        DatabaseReference mPostReference = FirebaseDatabase.getInstance().getReference().child("favorite").child(email).child(data.f_id);
                         mPostReference.removeValue();
                     }
                 });
             }
-        }
+
         @Override
         public int getItemCount() {
             return time_list.size();
@@ -194,7 +196,7 @@ import java.util.ArrayList;
     private void get_bus(String bus_id, final TextView bid) {
         System.out.println(bus_id+"vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv");
         FirebaseDatabase data = FirebaseDatabase.getInstance();
-        data.getReference().child("bus").child(bus_id).addListenerForSingleValueEvent(new ValueEventListener() {
+        data.getReference().child("bus").child(bus_id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 createbuss details = dataSnapshot.getValue(createbuss.class);
@@ -210,7 +212,7 @@ import java.util.ArrayList;
 
     private void get_stop(final String stop_id, final TextView stopId) {
         FirebaseDatabase data = FirebaseDatabase.getInstance();
-        data.getReference().child("stop").child(stop_id).addListenerForSingleValueEvent(new ValueEventListener() {
+        data.getReference().child("stop").child(stop_id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 createstop details = dataSnapshot.getValue(createstop.class);
@@ -224,9 +226,10 @@ import java.util.ArrayList;
         });
     }
 
+
     private void get_routes(String routeidd, final TextView floc, final TextView tloc) {
         FirebaseDatabase data = FirebaseDatabase.getInstance();
-        data.getReference().child("route").child(routeidd).addListenerForSingleValueEvent(new ValueEventListener() {
+        data.getReference().child("route").child(routeidd).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 createroute details=dataSnapshot.getValue(createroute.class);
@@ -244,17 +247,18 @@ import java.util.ArrayList;
       public void get_fav_routes() {
           String email = FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".", "");
           FirebaseDatabase data = FirebaseDatabase.getInstance();
-          data.getReference().child("favorite").child(email).addListenerForSingleValueEvent(new ValueEventListener() {
+          data.getReference().child("favorite").child(email).addValueEventListener(new ValueEventListener() {
               @Override
               public void onDataChange(DataSnapshot dataSnapshot) {
                   for (DataSnapshot data : dataSnapshot.getChildren()) {
                       createfav details = data.getValue(createfav.class);
-                      details.routeidd = data.getKey();
                       routes_fav.add(details.routeidd);
+                      details.f_id = data.getKey();
+                      f_id.add(details.f_id);
+                      System.out.println("1111111111111111111111111111111111111111111111111111111111111111111111111"+routes_fav.toString());
+                      get_time();
                   }
-
               }
-
               @Override
               public void onCancelled(DatabaseError databaseError) {
 

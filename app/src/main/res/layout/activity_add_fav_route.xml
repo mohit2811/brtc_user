@@ -31,7 +31,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Profile"
+            android:text="Add Favorite Route"
             android:textColor="#000"
             android:layout_marginLeft="10dp"/>
 
